@@ -1,0 +1,13 @@
+---
+# vars file for aws_instance
+region: ap-south-1
+ami_id: ami-08e0ca9924195beba
+instance_type: t2.micro
+subnet: subnet-5b575e33
+sg: sg-0f5b92dd31c120457
+key: mykey 
+instance_name: K8S_node
+access_key: ****************
+secret_key: ****************
+
+

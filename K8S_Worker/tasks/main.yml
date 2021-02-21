@@ -1,0 +1,48 @@
+---
+# tasks file for K8S_Master
+
+- name: "Installing docker"
+  package:
+          name: docker
+          state: present
+- name: "Starting the docker service"
+  service:
+          name: docker
+          state: started
+          enabled: yes
+- name: "Configuring Kubernetes repo"
+  copy:
+          src: kubernetes.repo
+          dest: /etc/yum.repos.d/kubernetes.repo
+- name: "Installing kubeadm"
+  command: yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+- name: "Starting kubelet service"
+  service:
+          name: kubelet
+          state: started
+          enabled: yes
+- name: "Pulling config images"
+  command: kubeadm config images pull
+- name: "Changing driver for docker"
+  copy:
+          src: daemon.json
+          dest: /etc/docker/daemon.json
+  register: x
+- name: "restarting docker service"
+  service:
+          name: docker
+          state: restarted
+  when: x.changed==true
+- name: "Installing tc"
+  package:
+          name: iproute-tc
+          state: present
+- name: "uploading k8s.conf file"
+  copy:
+          src: k8s.conf
+          dest: /etc/sysctl.d/k8s.conf
+- name: "restarting system"
+  shell: sysctl --system
+- name: "Joining slave with master"
+  command: "{{ hostvars[item]['join']['stdout']  }}"
+  with_items: "{{ groups['Master']  }}"

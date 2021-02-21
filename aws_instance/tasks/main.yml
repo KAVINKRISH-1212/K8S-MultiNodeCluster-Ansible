@@ -1,0 +1,19 @@
+---
+# tasks file for aws_instance
+- name: "instance creation"
+  ec2_instance:
+          region: "{{ region }}"
+          image_id: "{{ ami_id }}"
+          instance_type: "{{ instance_type }}"
+          vpc_subnet_id: "{{ subnet }}"
+          security_groups: "{{ sg }}"
+          network:
+                  assign_public: yes
+          key_name: "{{ key }}"
+          name: "{{ instance_name }}"
+          state: present
+          aws_access_key: "{{ access_key }}"
+          aws_secret_key: "{{ secret_key  }}"
+
+
+
